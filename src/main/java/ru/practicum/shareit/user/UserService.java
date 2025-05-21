@@ -3,6 +3,8 @@ package ru.practicum.shareit.user;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.handler.IncorrectDataException;
+
 import java.util.List;
 
 @Service
@@ -20,10 +22,10 @@ public class UserService {
 
     public User add(@Valid User user) {
         if (user.getEmail() == null || user.getEmail().isBlank())
-            throw new RuntimeException("Email не может быть пустым");
+            throw new IncorrectDataException("Email не может быть пустым");
 
         if (user.getName() == null || user.getName().isBlank())
-            throw new RuntimeException("Name не может быть пустым");
+            throw new IncorrectDataException("Name не может быть пустым");
 
         return userRepository.add(user);
     }

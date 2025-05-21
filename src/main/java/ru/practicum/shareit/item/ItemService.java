@@ -2,9 +2,11 @@ package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.exception.OtherUserException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,10 +18,6 @@ public class ItemService {
         return itemRepository.getById(id);
     }
 
-    public List<Item> getAll() {
-        return itemRepository.getAll();
-    }
-
     public Item add(Item item, User owner) {
         return itemRepository.add(item, owner);
     }
@@ -27,24 +25,18 @@ public class ItemService {
     public Item update(Long id, Item updItem, User user) {
         Item item = itemRepository.getById(id);
         if (!checkOwner(item, user)) {
-            throw  new RuntimeException("Нельзя обновлять предметы другого пользователя");
+            throw new OtherUserException("Нельзя обновлять предметы другого пользователя");
         }
 
         return itemRepository.update(id, updItem, user);
     }
 
-    public void delete(Long id, User user) {
-        Item item = itemRepository.getById(id);
-
-        if (!checkOwner(item, user)) {
-            throw  new RuntimeException("Нельзя удалять предметы другого пользователя");
+    public List<Item> search(User user, String text) {
+        if (text == null) {
+            return new ArrayList<>();
         }
 
-        itemRepository.delete(id);
-    }
-
-    public List<Item> search(User user, String desc) {
-        return itemRepository.search(user, desc);
+        return itemRepository.search(user, text);
     }
 
     public List<Item> getAllByUser(User user) {
