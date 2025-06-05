@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.IncorrectDataException;
+import ru.practicum.shareit.handler.NotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -13,11 +15,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<User> getAll() {
-        return userRepository.getAll();
+        return userRepository.findAll();
     }
 
     public User getById(Long id) {
-        return userRepository.getById(id);
+        return Optional.of(userRepository.findById(id)).get().orElseThrow(() -> new NotFoundException("Пользователь id = " + id + " не найден"));
     }
 
     public User add(@Valid User user) {
@@ -27,14 +29,24 @@ public class UserService {
         if (user.getName() == null || user.getName().isBlank())
             throw new IncorrectDataException("Name не может быть пустым");
 
-        return userRepository.add(user);
+        return userRepository.save(user);
     }
 
     public void delete(Long id) {
-        userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 
-    public User update(Long id, User user) {
-        return userRepository.update(id, user);
+    public User update(User user) {
+        User existingUser = getById(user.getId());
+
+        if (user.getName() == null) {
+            user.setName(existingUser.getName());
+        }
+
+        if (user.getEmail() == null) {
+            user.setEmail(existingUser.getEmail());
+        }
+
+        return userRepository.save(user);
     }
 }
