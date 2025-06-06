@@ -65,23 +65,14 @@ public class ItemService {
             throw new OtherUserException("Нельзя обновлять предметы другого пользователя");
         }
 
-        if (updItem.getName() == null) {
-            updItem.setName(existingItem.getName());
-        }
+        Item newItem = existingItem.toBuilder()
+                .name(updItem.getName() != null ? updItem.getName() : existingItem.getName())
+                .available(updItem.getAvailable() != null ? updItem.getAvailable() : existingItem.getAvailable())
+                .request(updItem.getRequest() != null ? updItem.getRequest() : existingItem.getRequest())
+                .description(updItem.getDescription() != null ? updItem.getDescription() : existingItem.getDescription())
+                .build();
 
-        if (updItem.getAvailable() == null) {
-            updItem.setAvailable(existingItem.getAvailable());
-        }
-
-        if (updItem.getRequest() == null) {
-            updItem.setRequest(existingItem.getRequest());
-        }
-
-        if (updItem.getDescription() == null) {
-            updItem.setDescription(existingItem.getDescription());
-        }
-
-        return itemRepository.save(updItem);
+        return itemRepository.save(newItem);
     }
 
     public List<Item> search(Long ownerId, String text) {
