@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.IncorrectDataException;
 import ru.practicum.shareit.handler.NotFoundException;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,17 +37,14 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User update(User user) {
-        User existingUser = getById(user.getId());
+    public User update(User updUser) {
+        User existingUser = Optional.of(userRepository.findById(updUser.getId())).get().orElseThrow(() -> new NotFoundException("Пользователь id = " + updUser.getId() + " не найден"));
 
-        if (user.getName() == null) {
-            user.setName(existingUser.getName());
-        }
+        User newUser = existingUser.toBuilder()
+                .name(updUser.getName() != null ? updUser.getName() : existingUser.getName())
+                .email(updUser.getEmail() != null ? updUser.getEmail() : existingUser.getEmail())
+                .build();
 
-        if (user.getEmail() == null) {
-            user.setEmail(existingUser.getEmail());
-        }
-
-        return userRepository.save(user);
+        return userRepository.save(newUser);
     }
 }
