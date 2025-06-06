@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.IncorrectDataException;
 import ru.practicum.shareit.handler.NotFoundException;
-import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 import java.util.Optional;
