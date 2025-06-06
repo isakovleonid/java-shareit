@@ -7,8 +7,6 @@ import ru.practicum.shareit.booking.dto.BookingAddDto;
 import ru.practicum.shareit.booking.dto.BookingAddDtoMapper;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
-import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.user.UserService;
 
 import java.util.List;
 
@@ -20,10 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingService bookingService;
-    private final UserService userService;
     private final BookingDtoMapper bookingDtoMapper;
     private final BookingAddDtoMapper bookingAddDtoMapper;
-    private final ItemService itemService;
 
     @GetMapping("/{id}")
     public BookingDto getById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("id") Long bookingId) {

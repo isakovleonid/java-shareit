@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.AllowedValue.AllowedValues;
+import ru.practicum.shareit.handler.IncorrectDataException;
 import ru.practicum.shareit.handler.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.exception.OtherUserException;
@@ -39,9 +40,17 @@ public class BookingService {
     }
 
     public Booking add(Booking booking, Long itemId, Long bookerId) {
+        if (booking.getEnd().isBefore(booking.getStart())) {
+            throw new IncorrectDataException("Дата окончания болнирования не может быть раньше даты начала бронирования");
+        }
+
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с id = " + itemId + " не найден"));
         User booker = userRepository.findById(bookerId).orElseThrow(() -> new NotFoundException("Пользователь с id = " + bookerId + " не найден"));
         booking.setBooker(booker);
+
+        if (item.getOwner().equals(booker)) {
+            throw new IncorrectDataException("Владелец предмета не может оставлять заявку на бронирование");
+        }
         booking.setItem(item);
 
         if (!booking.getItem().getAvailable()) {
@@ -56,6 +65,10 @@ public class BookingService {
 
         if (!checkUser(booking, userId)) {
             throw new OtherUserException("Нельзя подтверждать заявки предметов другого пользователя");
+        }
+        if (approved && booking.getStatus().equals(BookingStatus.APPROVED)
+         || !approved && booking.getStatus().equals(BookingStatus.REJECTED)) {
+            throw new IncorrectDataException("Нельзя повторного обрабатывать заявку на бронирование");
         }
         if (approved) {
             booking.setStatus(BookingStatus.APPROVED);
