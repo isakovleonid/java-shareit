@@ -12,9 +12,7 @@ public class ItemDtoMapper implements DTOMapper<ItemDto, Item> {
         itemDto.setId(item.getId());
         itemDto.setName(item.getName());
         itemDto.setAvailable(item.getAvailable());
-        itemDto.setOwner(item.getOwner());
         itemDto.setDescription(item.getDescription());
-        itemDto.setRequest(item.getRequest());
 
         return itemDto;
     }
@@ -25,9 +23,7 @@ public class ItemDtoMapper implements DTOMapper<ItemDto, Item> {
         item.setId(itemDto.getId());
         item.setName(itemDto.getName());
         item.setAvailable(itemDto.getAvailable());
-        item.setOwner(itemDto.getOwner());
         item.setDescription(itemDto.getDescription());
-        item.setRequest(itemDto.getRequest());
 
         return item;
     }
