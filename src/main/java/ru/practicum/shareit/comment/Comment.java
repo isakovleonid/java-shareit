@@ -1,6 +1,7 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.comment;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -8,30 +9,30 @@ import ru.practicum.shareit.user.User;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "bookings", schema = "public")
 @Data
-@NoArgsConstructor
+@Table(name = "comments")
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@NoArgsConstructor
+@Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Booking {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "start_date")
-    private LocalDateTime start;
+    @NotNull
+    private String text;
 
-    @Column(name = "end_date")
-    private LocalDateTime end;
-
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "booker_id")
-    private User booker;
+    @JoinColumn(name = "author_id")
+    private User author;
 
-    private BookingStatus status;
+    @NotNull
+    private LocalDateTime created;
 }
