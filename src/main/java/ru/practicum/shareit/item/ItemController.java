@@ -18,8 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemController {
     private final ItemService itemService;
-    private final ItemDtoMapper itemDtoMapper;
-    private final CommentDtoMapper commentDtoMapper;
 
     @GetMapping
     public List<ItemWithDatesDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
@@ -32,9 +30,7 @@ public class ItemController {
             return new ArrayList<>();
         }
 
-        return itemService.search(ownerId, text).stream()
-                .map(itemDtoMapper::toDTO)
-                .toList();
+        return itemService.search(ownerId, text);
     }
 
     @GetMapping("/{id}")
@@ -44,20 +40,17 @@ public class ItemController {
 
     @PostMapping
     public ItemDto add(@RequestHeader("X-Sharer-User-Id") Long ownerId, @RequestBody ItemDto itemDto) {
-        Item item = itemDtoMapper.fromDTO(itemDto);
-
-        return itemDtoMapper.toDTO(itemService.add(ownerId, item));
+        return itemService.add(ownerId, itemDto);
     }
 
     @PatchMapping("/{id}")
     public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long ownerId, @PathVariable("id") Long itemId, @RequestBody ItemDto itemDto) {
-        Item updIitem = itemDtoMapper.fromDTO(itemDto);
-        return itemDtoMapper.toDTO(itemService.update(ownerId, itemId, updIitem));
+        return itemService.update(ownerId, itemId, itemDto);
     }
 
     @PostMapping("/{id}/comment")
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long authorId, @PathVariable("id") Long itemId, @RequestBody CommentDto comment) {
-        return commentDtoMapper.toDTO(itemService.addComment(itemId, authorId, comment.getText()));
+        return itemService.addComment(itemId, authorId, comment.getText());
     }
 
 }

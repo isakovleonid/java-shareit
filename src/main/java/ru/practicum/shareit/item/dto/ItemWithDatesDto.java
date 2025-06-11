@@ -14,6 +14,7 @@ public class ItemWithDatesDto {
     private String name;
     private String description;
     private Boolean available;
+    private Long requestId;
 
     private LocalDateTime lastBooking;
     private LocalDateTime nextBooking;

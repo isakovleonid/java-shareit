@@ -7,19 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.User;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "requests", schema = "public")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemRequest {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private LocalDateTime created;
+
+    @ManyToOne
     @JoinColumn(name = "requestor_id")
     private User requestor;
 }

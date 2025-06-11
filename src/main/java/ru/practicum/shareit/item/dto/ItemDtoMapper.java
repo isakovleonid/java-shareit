@@ -13,6 +13,9 @@ public class ItemDtoMapper implements DTOMapper<ItemDto, Item> {
         itemDto.setName(item.getName());
         itemDto.setAvailable(item.getAvailable());
         itemDto.setDescription(item.getDescription());
+        if (item.getRequest() != null) {
+            itemDto.setRequestId(item.getRequest().getId());
+        }
 
         return itemDto;
     }
