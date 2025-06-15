@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class DatabaseConnectionTest {
 
     @Autowired

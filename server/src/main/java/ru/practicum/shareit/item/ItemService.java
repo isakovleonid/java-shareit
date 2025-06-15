@@ -74,7 +74,10 @@ public class ItemService {
 
         Item existingItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с id = " + itemId + " не найден"));
         User owner = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Пользователь с id = " + ownerId + " не найден"));
-        ItemRequest itemRequest = itemRequestRepository.findById(updItemDto.getRequestId()).orElseThrow(() -> new NotFoundException("Заявка с id = " + updItemDto.getRequestId() + " не найдена"));
+        ItemRequest itemRequest = null;
+        if (updItemDto.getRequestId() != null) {
+            itemRequest = itemRequestRepository.findById(updItemDto.getRequestId()).orElseThrow(() -> new NotFoundException("Заявка с id = " + updItemDto.getRequestId() + " не найдена"));
+        }
 
         if (!checkOwner(existingItem, owner)) {
             throw new OtherUserException("Нельзя обновлять предметы другого пользователя");
@@ -118,7 +121,7 @@ public class ItemService {
                                     item.getName(),
                                     item.getDescription(),
                                     item.getAvailable(),
-                                    item.getRequest().getId(),
+                                    item.getRequest() != null ? item.getRequest().getId() : null,
                                     lastBooking != null ? lastBooking.getEnd() : null,
                                     nextBooking != null ? nextBooking.getStart() : null,
                                     commentsDto);

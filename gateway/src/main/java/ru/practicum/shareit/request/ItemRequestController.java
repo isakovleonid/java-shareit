@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.handler.IncorrectDataException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 @RestController
@@ -17,6 +18,9 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<Object> add(@Valid @NotNull @RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemRequestDto itemRequestDto) {
+        if (itemRequestDto.getDescription().isBlank()) {
+            throw new IncorrectDataException("Description должен быть заполнен");
+        }
         return itemRequestClient.add(userId, itemRequestDto);
     }
 
@@ -26,7 +30,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getRequest(@Valid @NotNull @PathVariable Long requestId) {
+    public ResponseEntity<Object> getRequest(@Valid @NotNull @PathVariable("id") Long requestId) {
         return itemRequestClient.getDetailedRequestById(requestId);
     }
 

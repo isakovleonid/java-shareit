@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.IncorrectDataException;
@@ -22,7 +21,7 @@ public class UserService {
         return Optional.of(userRepository.findById(id)).get().orElseThrow(() -> new NotFoundException("Пользователь id = " + id + " не найден"));
     }
 
-    public User add(@Valid User user) {
+    public User add(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank())
             throw new IncorrectDataException("Email не может быть пустым");
 

@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
 @RestController
 @RequestMapping("/items")
@@ -22,7 +23,8 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> search(@NotNull @RequestHeader("X-Sharer-User-Id") Long ownerId, @NotNull @RequestParam("text") String text) {
+    public ResponseEntity<Object> search(@NotNull @RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                         @NotNull @RequestParam("text") String text) {
         if (text == null) {
             return null;
         }
@@ -31,17 +33,21 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId, @NotNull @PathVariable("id") Long id) {
+    public ResponseEntity<Object> getById(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @NotNull @PathVariable("id") Long id) {
         return itemClient.getById(userId, id);
     }
 
     @PostMapping
-    public ResponseEntity<Object> add(@NotNull @RequestHeader("X-Sharer-User-Id") Long ownerId, @Valid @RequestBody ItemDto itemDto) {
+    public ResponseEntity<Object> add(@NotNull @RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                      @Valid @RequestBody ItemDto itemDto) {
         return itemClient.add(ownerId, itemDto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> update(@NotNull @RequestHeader("X-Sharer-User-Id") Long ownerId,@Valid @PathVariable("id") Long itemId, @Valid @RequestBody ItemDto itemDto) {
+    public ResponseEntity<Object> update(@NotNull @RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                         @Valid @PathVariable("id") Long itemId,
+                                         @RequestBody ItemUpdateDto itemDto) {
         return itemClient.update(ownerId, itemId, itemDto);
     }
 

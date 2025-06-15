@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.handler.IncorrectDataException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUser(@NotNull @PathVariable Long userId) {
+    public ResponseEntity<Object> getUser(@NotNull @PathVariable("id") Long userId) {
         log.info("Get user with id={}", userId);
         return userClient.getUser(userId);
     }
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> update(@PathVariable("id") Long id, @Valid @RequestBody UserUpdateDto userDto) {
         return userClient.updateUser(id, userDto);
     }
 }

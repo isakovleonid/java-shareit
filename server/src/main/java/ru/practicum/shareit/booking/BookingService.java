@@ -30,7 +30,7 @@ public class BookingService {
     public Booking getById(Long id, Long ownerId) {
         Booking booking = findBookingById(id);
         if (!checkUser(booking, ownerId)) {
-            throw new OtherUserException("Нельзя Запрашивать заявки предметов другого пользователя");
+            throw new OtherUserException("Нельзя запрашивать заявки предметов другого пользователя");
         }
         return booking;
     }
