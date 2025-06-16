@@ -163,4 +163,16 @@ public class UserControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void addUser_shouldReturnConflict_whenEmailAlreadyExists() throws Exception {
+        UserDto duplicateUser = new UserDto();
+        duplicateUser.setName("Дубликат email");
+        duplicateUser.setEmail(testUser.getEmail());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(duplicateUser)))
+                .andExpect(status().isConflict());
+    }
 }
