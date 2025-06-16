@@ -23,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @ActiveProfiles("test")
 public class UserControllerIntegrationTest {
-
     @Autowired
     private MockMvc mockMvc;
 
