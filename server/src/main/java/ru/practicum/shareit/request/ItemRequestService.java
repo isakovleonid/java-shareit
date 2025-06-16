@@ -21,10 +21,6 @@ public class ItemRequestService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    public ItemRequest getById(Long id) {
-        return Optional.of(itemRequestRepository.findById(id)).get().orElseThrow(() -> new NotFoundException("Запрос id = " + id + " не найден"));
-    }
-
     public List<ItemRequest> getAllOtherUserRequest(Long userId) {
         return itemRequestRepository.findByRequestorIdNotOrderByCreatedDesc(userId);
     }
