@@ -101,10 +101,36 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
+    void addUser_shouldReturnBadRequest_whenEmailIsBlamk() throws Exception {
+        UserDto invalidUser = new UserDto();
+        invalidUser.setName("Новое имя");
+        invalidUser.setEmail("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidUser)))
+                .andExpect(status().is5xxServerError());
+
+        invalidUser.setEmail(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidUser)))
+                .andExpect(status().is5xxServerError());
+    }
+
+    @Test
     void addUser_shouldReturnBadRequest_whenNameIsBlank() throws Exception {
         UserDto invalidUser = new UserDto();
         invalidUser.setName("");
         invalidUser.setEmail("valid@example.com");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidUser)))
+                .andExpect(status().is5xxServerError());
+
+        invalidUser.setName(null);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +141,7 @@ public class UserControllerIntegrationTest {
     @Test
     void updateUser_shouldUpdateExistingUser() throws Exception {
         UserDto updatedUser = new UserDto();
-        updatedUser.setName("UНовое имя");
+        updatedUser.setName("Новое имя");
         updatedUser.setEmail("updated@example.com");
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", testUser.getId())

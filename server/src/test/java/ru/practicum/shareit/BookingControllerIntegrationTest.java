@@ -16,6 +16,8 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingAddDto;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.comment.CommentRepository;
+import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -46,6 +48,9 @@ public class BookingControllerIntegrationTest {
     private BookingRepository bookingRepository;
 
     @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private User testUser;
@@ -57,6 +62,7 @@ public class BookingControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        commentRepository.deleteAll();
         bookingRepository.deleteAll();
         itemRepository.deleteAll();
         userRepository.deleteAll();
@@ -154,6 +160,13 @@ public class BookingControllerIntegrationTest {
                         .param("state", BookingStatus.from("REJECTED").toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
+
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", testUser.getId())
+                        .param("state", "ERRORCODE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+
     }
 
     @Test
@@ -233,5 +246,43 @@ public class BookingControllerIntegrationTest {
                         .header("X-Sharer-User-Id", testUser.getId())
                         .param("approved", "false"))
                 .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    void addComment_UnallowedCommentNotEndBoooking() throws Exception {
+        CommentDto commentDto = CommentDto.builder()
+                        .text("Тестовый комментарий")
+                        .created(LocalDateTime.now())
+                        .build();
+
+        mockMvc.perform(post("/items/{id}/comment", testItem.getId())
+                .header("X-Sharer-User-Id", testUser.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(commentDto)))
+                .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    void addComment_AllowedCommentEndBoooking() throws Exception {
+        Booking newBooking = Booking.builder()
+                .start(LocalDateTime.now().minusDays(3))
+                .end(LocalDateTime.now().minusDays(1))
+                .item(testItem)
+                .booker(testUser)
+                .status(BookingStatus.from("APPROVED"))
+                .build();
+
+        bookingRepository.save(newBooking);
+
+        CommentDto commentDto = CommentDto.builder()
+                .text("Тестовый комментарий")
+                .created(LocalDateTime.now())
+                .build();
+
+        mockMvc.perform(post("/items/{id}/comment", testItem.getId())
+                        .header("X-Sharer-User-Id", testUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(commentDto)))
+                .andExpect(status().isOk());
     }
 }

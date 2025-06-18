@@ -9,6 +9,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.ItemRequest;
@@ -36,10 +40,16 @@ class ItemRequestControllerIntegrationTest {
     private ItemRequestRepository itemRequestRepository;
 
     @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private ItemRequestDtoMapper itemRequestDtoMapper;
+
+    @Autowired
+    private ItemDtoMapper itemDtoMapper;
 
     private User testUser;
     private ItemRequest testRequest;
@@ -61,11 +71,13 @@ class ItemRequestControllerIntegrationTest {
                 LocalDateTime.now(),
                 testUser
         );
+
         testRequest = itemRequestRepository.save(testRequest);
     }
 
     @AfterEach
     void deleteRepository() {
+        itemRepository.deleteAll();
         itemRequestRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -82,6 +94,22 @@ class ItemRequestControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testRequestDto)))
                 .andExpect(status().isOk());
+
+        User owner = userRepository.save(
+            new User(null, "Тестовый пользователь", "test@abc.com")
+        );
+
+        Item testItem = itemRepository.save(
+                new Item(null, "Дрель", "Мощная дрель", true, owner, testRequest)
+        );
+
+        ItemDto itemDto = itemDtoMapper.toDTO(testItem);
+
+        mockMvc.perform(patch("/items/{id}", testItem.getId())
+                        .header("X-Sharer-User-Id", owner.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(itemDto)))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -95,6 +123,34 @@ class ItemRequestControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testRequestDto)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addRequest_shouldReturnNullUser() throws Exception {
+        ItemRequestDto testRequestDto = new ItemRequestDto(
+                testRequest.getId(),
+                testRequest.getDescription(),
+                testRequest.getCreated());
+
+        mockMvc.perform(post("/requests")
+                        .header("X-Sharer-User-Id","")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testRequestDto)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void addRequest_shouldReturnNullDesc() throws Exception {
+        ItemRequestDto testRequestDto = new ItemRequestDto(
+                testRequest.getId(),
+                null,
+                testRequest.getCreated());
+
+        mockMvc.perform(post("/requests")
+                        .header("X-Sharer-User-Id",testUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testRequestDto)))
+                .andExpect(status().is5xxServerError());
     }
 
     @Test

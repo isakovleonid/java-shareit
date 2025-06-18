@@ -114,6 +114,17 @@ class ItemControllerIntegrationTest {
     }
 
     @Test
+    void shouldNotUpdateItemOtherUser() throws Exception {
+        ItemDto update = new ItemDto(null, "Новая дрель", null, null, null, null, null, null);
+
+        mockMvc.perform(patch("/items/{id}", item.getId())
+                        .header("X-Sharer-User-Id", booker.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(update)))
+                .andExpect(status().is5xxServerError());
+    }
+
+    @Test
     void shouldSearchItems() throws Exception {
         mockMvc.perform(get("/items/search")
                         .header("X-Sharer-User-Id", owner.getId())

@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Table(name = "comments")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Comment {
     @Id
