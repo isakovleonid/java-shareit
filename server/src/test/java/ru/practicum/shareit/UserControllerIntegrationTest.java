@@ -1,5 +1,7 @@
 package ru.practicum.shareit;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,7 @@ public class UserControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
+
         testUser = User.builder()
                 .name("Тестовый пользователь")
                 .email("test@example.com")
@@ -44,7 +47,7 @@ public class UserControllerIntegrationTest {
         testUser = userRepository.save(testUser);
     }
 
-    @Test
+     @Test
     void getAllUsers_shouldReturnListOfUsers() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/users")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -163,4 +166,6 @@ public class UserControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+
 }

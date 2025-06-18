@@ -41,7 +41,7 @@ public class BookingService {
 
     public Booking add(Booking booking, Long itemId, Long bookerId) {
         if (booking.getEnd().isBefore(booking.getStart())) {
-            throw new IncorrectDataException("Дата окончания болнирования не может быть раньше даты начала бронирования");
+            throw new IncorrectDataException("Дата окончания бронирования не может быть раньше даты начала бронирования");
         }
 
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с id = " + itemId + " не найден"));
