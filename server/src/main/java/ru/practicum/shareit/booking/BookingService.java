@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.AllowedValue.AllowedValues;
+import ru.practicum.shareit.allowedvalue.AllowedValues;
 import ru.practicum.shareit.handler.IncorrectDataException;
 import ru.practicum.shareit.handler.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;

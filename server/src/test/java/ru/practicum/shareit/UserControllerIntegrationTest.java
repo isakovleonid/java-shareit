@@ -75,9 +75,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     void addUser_shouldCreateNewUser() throws Exception {
-        UserDto newUser = new UserDto();
-        newUser.setName("Новые пользователь");
-        newUser.setEmail("new@example.com");
+        UserDto newUser = new UserDto(null, "Новые пользователь","new@example.com");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,9 +88,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     void addUser_shouldReturnBadRequest_whenEmailIsInvalid() throws Exception {
-        UserDto invalidUser = new UserDto();
-        invalidUser.setName("Новое имя");
-        invalidUser.setEmail("invalid-email");
+        UserDto invalidUser = new UserDto(null,"Новое имя","invalid-email");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -102,9 +98,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     void addUser_shouldReturnBadRequest_whenEmailIsBlamk() throws Exception {
-        UserDto invalidUser = new UserDto();
-        invalidUser.setName("Новое имя");
-        invalidUser.setEmail("");
+        UserDto invalidUser = new UserDto(null, "Новое имя","");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,9 +115,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     void addUser_shouldReturnBadRequest_whenNameIsBlank() throws Exception {
-        UserDto invalidUser = new UserDto();
-        invalidUser.setName("");
-        invalidUser.setEmail("valid@example.com");
+        UserDto invalidUser = new UserDto(null,"","valid@example.com");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -140,9 +132,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     void updateUser_shouldUpdateExistingUser() throws Exception {
-        UserDto updatedUser = new UserDto();
-        updatedUser.setName("Новое имя");
-        updatedUser.setEmail("updated@example.com");
+        UserDto updatedUser = new UserDto(null,"Новое имя","updated@example.com");
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", testUser.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -156,9 +146,7 @@ public class UserControllerIntegrationTest {
     @Test
     void updateUser_shouldReturnNotFound_whenUserDoesNotExist() throws Exception {
         long nonExistentId = 99999999L;
-        UserDto updatedUser = new UserDto();
-        updatedUser.setName("Новое имя");
-        updatedUser.setEmail("updated@example.com");
+        UserDto updatedUser = new UserDto(null, "Новое имя","updated@example.com");
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", nonExistentId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -168,8 +156,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     void updateUser_shouldUpdateOnlyName_whenEmailIsNull() throws Exception {
-        UserDto partialUpdate = new UserDto();
-        partialUpdate.setName("Не указан email");
+        UserDto partialUpdate = new UserDto(null, "Не указан email", null);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", testUser.getId())
                         .contentType(MediaType.APPLICATION_JSON)

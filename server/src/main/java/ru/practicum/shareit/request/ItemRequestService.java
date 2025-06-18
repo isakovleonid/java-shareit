@@ -3,7 +3,6 @@ package ru.practicum.shareit.request;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.handler.IncorrectDataException;
 import ru.practicum.shareit.handler.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDetailDto;
@@ -25,12 +24,6 @@ public class ItemRequestService {
     }
 
     public ItemRequest add(Long userId, @Valid ItemRequest itemRequest) {
-        if (userId == null)
-            throw new IncorrectDataException("Заявитель не может быть пустым");
-
-        if (itemRequest.getDescription() == null || itemRequest.getDescription().isBlank())
-            throw new IncorrectDataException("Описание не может быть пустым");
-
         User requester = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id = " + userId + " не найден"));
 
         LocalDateTime now = LocalDateTime.now();
